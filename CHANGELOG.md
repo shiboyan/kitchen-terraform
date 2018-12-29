@@ -8,6 +8,13 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Systems gained a `locations` attribute which enables the
+  specification of different InSpec control file locations. Refer to the
+  [documentation][terraform-verifier-systems-locations] for more
+  details.
+  
 ## [4.2.0] - 2018-12-29
 
 ### Added
@@ -636,3 +643,4 @@ Gandalf the Free-As-In-Beer
 [travis ci build plan]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [terraform-issue-17655]: https://github.com/hashicorp/terraform/issues/17655
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
+[terraform-verifier-systems-locations]: https://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Verifier/Terraform#label-profile_paths
