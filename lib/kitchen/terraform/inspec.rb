@@ -65,9 +65,11 @@ module Kitchen
 
       private
 
-      def initialize(options:, profile_path:)
+      def initialize(locations:, options:)
         @runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
-        @runner.add_target path: profile_path
+        locations.each do |location|
+          @runner.add_target location
+        end
       end
     end
   end

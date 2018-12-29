@@ -40,6 +40,7 @@ require "support/kitchen/terraform/configurable_examples"
           enable_password: "enable_password",
           hosts_output: "hosts",
           key_files: ["first_key_file", "second_key_file"],
+          locations: ["/path/to/profile", "/path/to/control.rb", "https://github.com/dev-sec/linux-baseline.git"],
           name: "a-system-with-hosts",
           password: "password",
           path: "path",
@@ -169,7 +170,12 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       before do
-        allow(runner).to receive(:add_target).with(path: "/test/base/path/test-suite").and_return([profile])
+        allow(runner).to receive(:add_target).with("/path/to/profile").and_return([profile])
+        allow(runner).to receive(:add_target).with("/path/to/control.rb").and_return([profile])
+        allow(runner).to receive(:add_target).with("https://github.com/dev-sec/linux-baseline.git").and_return(
+          [profile]
+        )
+        allow(runner).to receive(:add_target).with("/test/base/path/test-suite").and_return([profile])
       end
     end
 

@@ -90,6 +90,19 @@ suites:
           shell_command: /bin/sh
           shell_options: -x
           user: root
+  - name: locations
+    includes:
+      - default
+    driver:
+      root_module_directory: test/terraform/locations
+    verifier:
+      systems:
+        - name: default
+          backend: local
+          locations:
+            - test/integration/locations/profile
+            - test/integration/locations/controls/truthy.rb
+            - https://github.com/brentm5/chef-compliance-profile-test.git
   - name: plug-ins
     includes:
       - default

@@ -20,24 +20,23 @@ module Kitchen
   module Terraform
     # InSpec instances act as interfaces to the InSpec gem.
     class InSpecWithoutHosts
-      # exec executes the InSpec controls of an InSpec profile.
+      # exec executes InSpec controls.
       #
       # @raise [::Kitchen::Terraform::Error] if the execution of the InSpec controls fails.
       # @return [void]
       def exec(system:)
         ::Kitchen::Terraform::InSpec
-          .new(options: options, profile_path: profile_path).info(message: "Verifying #{system}").exec
+          .new(locations: @locations, options: @options).info(message: "Verifying #{system}").exec
       end
 
       private
 
-      attr_accessor :options, :profile_path
-
+      # @param locations [::Array<::String>] the locations of InSpec control files which contains the controls to be
+      #   executed.
       # @param options [::Hash] options for execution.
-      # @param profile_path [::String] the path to the InSpec profile which contains the controls to be executed.
-      def initialize(options:, profile_path:)
-        self.options = options
-        self.profile_path = profile_path
+      def initialize(locations:, options:)
+        @locations = locations
+        @options = options
       end
     end
   end

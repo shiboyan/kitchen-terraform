@@ -251,6 +251,25 @@ module Kitchen
       #           - /path/to/first/key/file
       #           - /path/to/second/key/file
       #
+      # ====== locations
+      #
+      # The value of the +locations+ key is a sequence of scalars which is used to locate InSpec control files which
+      # contain controls to be executed against the system. Valid values of the key are described in the
+      # {https://www.inspec.io/docs/reference/cli/#exec InSpec exec documentation}. The default value for the key
+      # contains a scalar which combines Kitchen's test base path and the suite name, usually
+      # +["test/integration/<suite>"]+.
+      #
+      # <em>Example kitchen.yml</em>
+      #   verifier:
+      #     name: terraform
+      #     systems:
+      #       - name: a system
+      #         backend: local
+      #         locations:
+      #           - /path/to/profile
+      #           - /path/to/control.rb
+      #           - https://github.com/dev-sec/linux-baseline.git
+      #
       # ====== password
       #
       # The value of the +password+ key is a scalar which is used as the password for authentication with hosts in the
@@ -532,6 +551,7 @@ module Kitchen
         optional(:hosts).each :filled?, :str?
         optional(:hosts_output).filled :str?
         optional(:key_files).each(:filled?, :str?)
+        optional(:locations).each :filled?, :str?
         optional(:password).filled :str?
         optional(:path).filled :str?
         optional(:port).value :int?
