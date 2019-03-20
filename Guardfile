@@ -11,7 +11,7 @@ group :red_green_refactor, halt_on_fail: true do
     end
 
     guard :yard, cli: "--reload" do
-      watch /lib\/.+\.rb/
+      watch(/lib\/.+\.rb/)
     end
 
     guard(
