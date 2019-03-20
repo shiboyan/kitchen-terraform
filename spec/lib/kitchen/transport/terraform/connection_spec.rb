@@ -29,7 +29,7 @@ require "uri/https"
   end
 
   let :environment do
-    {"FOO" => "bar"}
+    { "FOO" => "bar" }
   end
 
   let :timeout do
