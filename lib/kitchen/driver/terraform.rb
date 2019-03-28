@@ -413,7 +413,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "#{variable_files_flags}",
       options: {
         cwd: config_root_module_directory,
-        environment: { "TF_WARN_OUTPUT_ERRORS" => "true" },
+        environment: {"TF_WARN_OUTPUT_ERRORS" => "true"},
         live_stream: logger,
         timeout: config_command_timeout,
       },

@@ -67,7 +67,7 @@ module ::Kitchen::Terraform::ShellOut
     yield(standard_output: ::Mixlib::ShellOut.new(
             "#{client} #{command}",
             options.merge(
-              environment: { "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" }.merge(
+              environment: {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1"}.merge(
                 options.fetch(:environment) do
                   {}
                 end

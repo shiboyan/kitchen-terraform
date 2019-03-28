@@ -16,25 +16,26 @@
 
 require "kitchen/terraform/error"
 
-::RSpec::Matchers.define :result_in_failure do
-  supports_block_expectations
+::RSpec::Matchers
+  .define :result_in_failure do
+    supports_block_expectations
 
-  chain(
-    :with_message,
-    :message
-  )
+    chain(
+      :with_message,
+      :message
+    )
 
-  match notify_expectation_failures: true do |actual|
-    expect(actual)
-      .to(
-        raise_error(
-          ::Kitchen::Terraform::Error,
-          message
+    match notify_expectation_failures: true do |actual|
+      expect(actual)
+        .to(
+          raise_error(
+            ::Kitchen::Terraform::Error,
+            message
+          )
         )
-      )
-  end
+    end
 
-  failure_message do |actual|
-    "expected #{actual} to result in a failure with the message #{message.inspect}"
+    failure_message do |actual|
+      "expected #{actual} to result in a failure with the message #{message.inspect}"
+    end
   end
-end

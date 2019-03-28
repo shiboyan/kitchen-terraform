@@ -16,10 +16,11 @@
 
 require "support/kitchen/terraform/config_attribute_type/integer_examples"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::CommandTimeout" do
-  include_context(
-    "Kitchen::Terraform::ConfigAttributeType::Integer",
-    attribute: :command_timeout,
-    default_value: 600,
-  )
-end
+::RSpec
+  .shared_examples "Kitchen::Terraform::ConfigAttribute::CommandTimeout" do
+    include_context(
+      "Kitchen::Terraform::ConfigAttributeType::Integer",
+      attribute: :command_timeout,
+      default_value: 600
+    )
+  end
