@@ -17,6 +17,9 @@
 require "kitchen"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
+require "open-uri"
+require "pathname"
+require "uri/https"
 
 module Kitchen
   module Transport
@@ -26,7 +29,11 @@ module Kitchen
         include ::Kitchen::ShellOut
 
         def download(remotes, local)
-          raise ::Kitchen::Transport::TransportFailed, local
+          ::URI::HTTPS.build(host: "releases.hashicorp.com", path: remotes.first).open do |https|
+            ::IO.copy_stream https, ::Pathname.new(local).join(https.basename)
+          end
+        rescue => error
+          raise ::Kitchen::Transport::TransportFailed, error.message
         end
 
         # Execute a command on the remote host.
@@ -49,7 +56,7 @@ module Kitchen
         private
 
         def environment
-          {"LC_ALL" => nil, "TF_IN_AUTOMATION" => "true"}.merge(
+          { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" }.merge(
             options.fetch(:environment) do
               {}
             end

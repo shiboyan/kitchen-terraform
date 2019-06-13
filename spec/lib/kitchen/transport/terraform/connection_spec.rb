@@ -29,7 +29,7 @@ require "uri/https"
   end
 
   let :environment do
-    {"FOO" => "bar"}
+    { "FOO" => "bar" }
   end
 
   let :timeout do
@@ -37,6 +37,10 @@ require "uri/https"
   end
 
   describe "#download" do
+    let :https do
+      instance_double ::URI::HTTPS
+    end
+
     let :local do
       "/local"
     end
@@ -57,12 +61,16 @@ require "uri/https"
       ::Pathname.new "/tmp/terraform_0.11.11_linux_amd64.zip"
     end
 
+    before do
+      allow(::URI::HTTPS).to receive(:build).with(
+        host: "releases.hashicorp.com",
+        path: remote_archive_path,
+      ).and_return https
+    end
+
     context "when the files can all be downloaded successfully" do
       before do
-        allow(::URI::HTTPS).to receive(:open).with(
-          host: "releases.hashicorp.com",
-          path: remote_archive_path,
-        ).and_return temporary_archive
+        allow(https).to receive(:open).and_yield temporary_archive
       end
 
       specify "the files are saved under the Kitchen directory" do
@@ -75,10 +83,14 @@ require "uri/https"
     end
 
     context "when the files can not all be downloaded successfully" do
+      before do
+        allow(https).to receive(:open).and_raise "open failed"
+      end
+
       specify "a Kitchen::Transport::TransportFailed error is raised" do
         expect do
           subject.download remotes, local
-        end.to raise_error ::Kitchen::Transport::TransportFailed
+        end.to raise_error ::Kitchen::Transport::TransportFailed, "open failed"
       end
     end
   end
