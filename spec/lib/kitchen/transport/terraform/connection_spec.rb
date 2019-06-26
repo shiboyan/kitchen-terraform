@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/transport/terraform/connection"
+require "open-uri"
 require "pathname"
 require "uri/https"
 
@@ -37,40 +38,33 @@ require "uri/https"
   end
 
   describe "#download" do
-    let :https do
-      instance_double ::URI::HTTPS
-    end
-
     let :local do
-      "/local"
+      ::Pathname.new "/local"
     end
 
     let :local_archive do
-      ::Pathname.new ::File.join local, "terraform_0.11.11_linux_amd64.zip"
+      ::Pathname.new "/local/archive.zip"
     end
 
-    let :remote_archive_path do
-      "/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip"
+    let :remote_archive do
+      ::URI::HTTPS.build host: "example.com", path: "/remote/archive.zip"
     end
 
     let :remotes do
-      [remote_archive_path]
-    end
-
-    let :temporary_archive do
-      ::Pathname.new "/tmp/terraform_0.11.11_linux_amd64.zip"
+      [remote_archive]
     end
 
     before do
-      allow(::URI::HTTPS).to receive(:build).with(
-        host: "releases.hashicorp.com",
-        path: remote_archive_path,
-      ).and_return https
+      allow(local).to receive :mkpath
     end
 
     context "when the files can all be downloaded successfully" do
+      let :temporary_archive do
+        ::Pathname.new "/tmp/archive.zip"
+      end
+
       before do
-        allow(https).to receive(:open).and_yield temporary_archive
+        allow(remote_archive).to receive(:open).and_yield temporary_archive
       end
 
       specify "the files are saved under the Kitchen directory" do
@@ -84,7 +78,7 @@ require "uri/https"
 
     context "when the files can not all be downloaded successfully" do
       before do
-        allow(https).to receive(:open).and_raise "open failed"
+        allow(remote_archive).to receive(:open).and_raise "open failed"
       end
 
       specify "a Kitchen::Transport::TransportFailed error is raised" do
