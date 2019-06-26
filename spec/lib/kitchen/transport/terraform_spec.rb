@@ -30,4 +30,14 @@ require "support/kitchen/terraform/configurable_examples"
       expect(described_class.superclass).to be ::Kitchen::Transport::Base
     end
   end
+
+  describe "#connection" do
+    let :state do
+      {}
+    end
+
+    specify "should return a ::Kitchen::Transport::Terraform::Connection" do
+      expect(subject.connection(state)).to be_kind_of ::Kitchen::Transport::Terraform::Connection
+    end
+  end
 end

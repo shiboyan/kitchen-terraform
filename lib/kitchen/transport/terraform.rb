@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/configurable"
+require "kitchen/transport/terraform/connection"
 
 module Kitchen
   module Transport
@@ -32,6 +33,10 @@ module Kitchen
       kitchen_transport_api_version 2
 
       include ::Kitchen::Terraform::Configurable
+
+      def connection(_state)
+        ::Kitchen::Transport::Terraform::Connection.new
+      end
     end
   end
 end
