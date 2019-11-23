@@ -16,7 +16,6 @@
 
 require "kitchen"
 require "kitchen/terraform/command/output"
-require "kitchen/terraform/command/version"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/config_attribute/color"
@@ -32,7 +31,8 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/shell_out"
-require "kitchen/terraform/version_verifier_factory"
+require "kitchen/terraform/version_verifier"
+require "kitchen/terraform/version_verifier_strategy_factory"
 require "rubygems"
 require "shellwords"
 
@@ -532,12 +532,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   def verify_version
-    logger.banner "Starting verification of the Terraform client version."
-    ::Kitchen::Terraform::Command::Version.run do |version:|
-      ::Kitchen::Terraform::VersionVerifierFactory.new(strict: config_verify_version)
-        .build(logger: logger, version_requirement: version_requirement).verify version: version
-    end
-    logger.banner "Finished verification of the Terraform client version."
+    ::Kitchen::Terraform::VersionVerifier.new(
+      logger: logger,
+      strategy_factory: ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(
+        logger: logger,
+        requirement: version_requirement,
+        strict: config_verify_version,
+      ),
+    ).verify
   end
 
   def workspace_name

@@ -14,50 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/version_verifier_strategy/permissive"
-require "kitchen/terraform/version_verifier_strategy/strict"
-
 module Kitchen
   module Terraform
     # VersionVerifier is the class of objects which verify a Terraform client version against a requirement.
     class VersionVerifier
-      class << self
-        # .permissive creates a permissive VersionVerifier.
-        def permissive(logger:, requirement:)
-          new(
-            logger: logger,
-            requirement: requirement,
-            strategy: ::Kitchen::Terraform::VersionVerifierStrategy::Permissive.new(logger: logger),
-          )
-        end
-
-        # .strict creates a strict VersionVerifier.
-        def strict(logger:, requirement:)
-          new(
-            logger: logger,
-            requirement: requirement,
-            strategy: ::Kitchen::Terraform::VersionVerifierStrategy::Strict.new(logger: logger),
-          )
-        end
+      # #verify verifies a version against the requirement.
+      def verify
+        logger.banner "Starting verification of the Terraform client version."
+        strategy_factory.build.call
+        logger.banner "Finished verification of the Terraform client version."
       end
 
-      # #verify verifies a version against the requirement.
-      def verify(version:)
-        @logger.info "Supported Terraform client versions are in the interval of #{@requirement}."
-        if @requirement.satisfied_by? version
-          @strategy.supported
-        else
-          @strategy.unsupported
-        end
+      # #initialize prepares a new instance of the class.
+      #
+      # @param logger [Kitchen::Logger] a logger to log messages.
+      # @param strategy_factory [Kitchen::Terraform::VersionVerifierStrategyFactory] a verification strategy factory.
+      # @return [Kitchen::Terraform::VersionVerifier]
+      def initialize(logger:, strategy_factory:)
+        self.logger = logger
+        self.strategy_factory = strategy_factory
       end
 
       private
 
-      def initialize(logger:, requirement:, strategy:)
-        @logger = logger
-        @requirement = requirement
-        @strategy = strategy
-      end
+      attr_accessor :logger, :strategy_factory
     end
   end
 end

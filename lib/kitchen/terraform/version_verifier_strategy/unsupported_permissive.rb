@@ -19,18 +19,14 @@ require "kitchen"
 module Kitchen
   module Terraform
     module VersionVerifierStrategy
-      # Permissive is the class of objects which provide a permissive strategy for VersionVerifiers.
-      class Permissive
-        # #supported informs the user that the version is supported.
-        def supported
-          @logger.info "The Terraform client version is supported."
-
-          self
-        end
-
-        # #unsupported informs the user that the version is not supported.
-        def unsupported
-          @logger.warn(
+      # UnsupportedPermissive is the class of objects which provide a permissive strategy for unsupported Terraform
+      # client versions.
+      class UnsupportedPermissive
+        # #call informs the user that the version is unsupported.
+        #
+        # @return [self]
+        def call
+          logger.warn(
             "The Terraform client version is not supported. Set `driver.verify_version: true` to upgrade this " \
             "warning to an error."
           )
@@ -38,11 +34,17 @@ module Kitchen
           self
         end
 
+        # #initialize prepares a new instance of the class.
+        #
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @return [Kitchen::Terraform::VersionVerifierStrategy::UnsupportedPermissive]
+        def initialize(logger:)
+          self.logger = logger
+        end
+
         private
 
-        def initialize(logger:)
-          @logger = logger
-        end
+        attr_accessor :logger
       end
     end
   end
